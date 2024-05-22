@@ -1,3 +1,42 @@
 schema = 3
 
 [mod]
+  [mod."ariga.io/atlas"]
+    version = "v0.19.1-0.20240203083654-5948b60a8e43"
+    hash = "sha256-wyuU3hcy3FbPa7iXCTGTKJ5oZH0D2SjzUZiHDGfcE+Q="
+  [mod."entgo.io/ent"]
+    version = "v0.13.1"
+    hash = "sha256-mNv9rc5Rtr46WRMHm518jT+gVDIFahxJ32H6Qp2Yzws="
+  [mod."github.com/agext/levenshtein"]
+    version = "v1.2.1"
+    hash = "sha256-SuFgpvp7KGO4f2t0KnkhSUv7iRI7oGq40CjRc1tLNr4="
+  [mod."github.com/apparentlymart/go-textseg/v13"]
+    version = "v13.0.0"
+    hash = "sha256-Hn+zO0J/vnG5U6JvZfRyWm8vsqYdjh4RAreWnZLCQKQ="
+  [mod."github.com/go-openapi/inflect"]
+    version = "v0.19.0"
+    hash = "sha256-jS969dMoR2zLfVfsIQoQIbATyE5p2mIZfW9SnxY7W68="
+  [mod."github.com/google/go-cmp"]
+    version = "v0.6.0"
+    hash = "sha256-qgra5jze4iPGP0JSTVeY5qV5AvEnEu39LYAuUCIkMtg="
+  [mod."github.com/google/uuid"]
+    version = "v1.3.0"
+    hash = "sha256-QoR55eBtA94T2tBszyxfDtO7/pjZZSGb5vm7U0Xhs0Y="
+  [mod."github.com/hashicorp/hcl/v2"]
+    version = "v2.13.0"
+    hash = "sha256-Y67be1wd7PI7Rmc4tX3klCE7fCokhZuvbXFmbfD1Htc="
+  [mod."github.com/lib/pq"]
+    version = "v1.10.9"
+    hash = "sha256-Gl6dLtL+yk6UrTTWfas43aM4lP/pNa2l7+ITXnjQyKs="
+  [mod."github.com/mitchellh/go-wordwrap"]
+    version = "v0.0.0-20150314170334-ad45545899c7"
+    hash = "sha256-aR+xW4TnVo96Cbw168fhdIBEh7O43mOlHdLx/WxrwVs="
+  [mod."github.com/zclconf/go-cty"]
+    version = "v1.8.0"
+    hash = "sha256-Sf4mCSBV8e53x8nI0YPgZHivNWmUseWc26AtTdcUv4c="
+  [mod."golang.org/x/mod"]
+    version = "v0.15.0"
+    hash = "sha256-ANSnGmd525BfnkMZpCmu6deMPFGADtnZx3lmZpdm2aM="
+  [mod."golang.org/x/text"]
+    version = "v0.13.0"
+    hash = "sha256-J34dbc8UNVIdRJUZP7jPt11oxuwG8VvrOOylxE7V3oA="
