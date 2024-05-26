@@ -61,10 +61,12 @@ pkgs.mkShell {
   packages = [
     goEnv
     gomod2nix
+    pkgs.air
     pkgs.delve
     pkgs.go_1_22
     pkgs.go-junit-report
     pkgs.golangci-lint
+    pkgs.gomacro
     pkgs.goreleaser
     pkgs.go-task
     pkgs.gotestsum

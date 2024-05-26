@@ -1,19 +1,30 @@
-version: '3'
+version: "3"
 
 tasks:
   up:
     cmds:
       - docker compose up -d
 
-  gen:
+  gen-ent:
+    cmds:
+      - go generate ./ent
+
+  gen-ent-model:
     cmds:
       - go run -mod=mod entgo.io/ent/cmd/ent new {{ .MODEL }}
     requires:
       vars: [MODEL]
 
-  ent:
+  gen-db-migration:
     cmds:
-      - go generate ./ent
+      - |
+        atlas migrate diff \
+          {{ .MIGRATION_NAME }} \
+          --env local \
+          --to "ent://ent/schema" \
+          --dev-url "postgres://postgres:postgres@:5432/saas?search_path=public&sslmode=disable"
+    requires:
+      vars: [MIGRATION_NAME]
 
   dev-db-create:
     cmds:
@@ -28,3 +39,25 @@ tasks:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: saas
+
+  dev-db-connect:
+    cmds:
+      - |
+        docker compose exec {{ .DB_CONTAINER }} psql \
+          -h 127.0.0.1 \
+          -p 5432 \
+          -U {{ .DB_USER }} \
+          -d {{ .DB_NAME }}
+    vars:
+      DB_CONTAINER: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: saas
+
+  dev-db-atlas:
+    cmds:
+      - |
+        atlas schema inspect \
+          -u "ent://ent/schema" \
+          --dev-url "postgres://postgres:postgres@:5432/saas?search_path=public&sslmode=disable" \
+          -w
