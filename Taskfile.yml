@@ -61,3 +61,7 @@ tasks:
           -u "ent://ent/schema" \
           --dev-url "postgres://postgres:postgres@:5432/saas?search_path=public&sslmode=disable" \
           -w
+
+  dev-db-migrate:
+    cmds:
+      - atlas migrate apply --env local 
