@@ -20,7 +20,7 @@ tasks:
       - |
         atlas migrate diff \
           {{ .MIGRATION_NAME }} \
-          --env local \
+          --env dev \
           --to "ent://ent/schema" \
           --dev-url "postgres://postgres:postgres@:5432/saas?search_path=public&sslmode=disable"
     requires:
@@ -64,4 +64,4 @@ tasks:
 
   dev-db-migrate:
     cmds:
-      - atlas migrate apply --env local 
+      - atlas migrate apply --env dev 
