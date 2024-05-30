@@ -30,8 +30,8 @@ func (s *UserService) CreateUser(email string) (*ent.User, error) {
 
 // GetUserById queries the database for a user by its ID and returns the user
 // or an error.
-func (s *UserService) GetUserById(id int) (*ent.User, error) {
-	return s.repo.QueryUserById(id)
+func (s *UserService) GetUserByID(id int) (*ent.User, error) {
+	return s.repo.QueryUserByID(id)
 }
 
 // GetUserByEmail queries the database for a user by its email and returns the

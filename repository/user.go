@@ -11,7 +11,7 @@ import (
 
 type IUserRepository interface {
 	CreateUser(user *ent.User) (*ent.User, error)
-	QueryUserById(id int) (*ent.User, error)
+	QueryUserByID(id int) (*ent.User, error)
 	QueryUserByEmail(email string) (*ent.User, error)
 }
 
@@ -34,7 +34,6 @@ func (repo *UserRepository) CreateUser(user *ent.User) (*ent.User, error) {
 		Create().
 		SetEmail(user.Email).
 		Save(repo.conn.Ctx)
-
 	if err != nil {
 		return nil, fmt.Errorf("failed creating user: %w", err)
 	}
@@ -46,12 +45,11 @@ func (repo *UserRepository) CreateUser(user *ent.User) (*ent.User, error) {
 
 // QueryUserById queries the database for a user by its ID and returns the user
 // or an error.
-func (repo *UserRepository) QueryUserById(id int) (*ent.User, error) {
+func (repo *UserRepository) QueryUserByID(id int) (*ent.User, error) {
 	u, err := repo.conn.Client.User.
 		Query().
 		Where(user.ID(id)).
 		Only(repo.conn.Ctx)
-
 	if err != nil {
 		return nil, fmt.Errorf("failed querying user: %w", err)
 	}
@@ -68,7 +66,6 @@ func (repo *UserRepository) QueryUserByEmail(email string) (*ent.User, error) {
 		Query().
 		Where(user.Email(email)).
 		Only(repo.conn.Ctx)
-
 	if err != nil {
 		return nil, fmt.Errorf("failed querying user: %w", err)
 	}
@@ -83,7 +80,6 @@ func (repo *UserRepository) DeleteUser(user *ent.User) error {
 	err := repo.conn.Client.User.
 		DeleteOne(user).
 		Exec(repo.conn.Ctx)
-
 	if err != nil {
 		return fmt.Errorf("failed deleting user: %w", err)
 	}
