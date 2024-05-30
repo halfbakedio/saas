@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  integration:
+  test:
     services:
       postgres:
         image: postgres:16
