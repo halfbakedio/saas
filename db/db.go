@@ -19,8 +19,10 @@ type Connection struct {
 	Client *ent.Client
 }
 
-var lock = &sync.Mutex{}
-var instance *Connection
+var (
+	lock     = &sync.Mutex{}
+	instance *Connection
+)
 
 func GetConnection() *Connection {
 	if instance == nil {
@@ -46,12 +48,12 @@ func (c *Connection) Open() error {
 	cfg := config.GetConfig()
 	dsn := fmt.Sprintf(
 		"host=%s port=%d user=%s dbname=%s password=%s sslmode=%s",
-		cfg.Db.Host,
-		cfg.Db.Port,
-		cfg.Db.User,
-		cfg.Db.Name,
-		cfg.Db.Password,
-		cfg.Db.SslMode,
+		cfg.DB.Host,
+		cfg.DB.Port,
+		cfg.DB.User,
+		cfg.DB.Name,
+		cfg.DB.Password,
+		cfg.DB.SslMode,
 	)
 
 	log.Debug("Connected to Postgres")

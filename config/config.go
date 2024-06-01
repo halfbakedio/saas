@@ -15,17 +15,21 @@ import (
 )
 
 type Config struct {
-	Db      DbConfig      `mapstructure:"db"`
+	Env     string        `mapstructure:"env"`
+	DB      DBConfig      `mapstructure:"db"`
 	Log     LogConfig     `mapstructure:"log"`
 	Service ServiceConfig `mapstructure:"service"`
 }
 
 const envPrefix = "SAAS"
 
-var lock = &sync.Mutex{}
-var instance *Config
+var (
+	lock     = &sync.Mutex{}
+	instance *Config
+)
 
 var defaults = map[string]interface{}{
+	"env":           "development",
 	"db.host":       "127.0.0.1",
 	"db.port":       5432,
 	"db.name":       "saas",

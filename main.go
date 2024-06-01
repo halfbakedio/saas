@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/halfbakedio/saas/cmd"
 	"github.com/halfbakedio/saas/db"
 
 	log "github.com/sirupsen/logrus"
@@ -15,4 +16,6 @@ func main() {
 	}
 
 	defer conn.Close()
+
+	cmd.Execute()
 }

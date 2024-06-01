@@ -7,7 +7,7 @@ package config
 // Example:
 //
 //	...
-type DbConfig struct {
+type DBConfig struct {
 	Host     string `mapstructure:"host"`
 	Port     int    `mapstructure:"port"`
 	Name     string `mapstructure:"name"`
