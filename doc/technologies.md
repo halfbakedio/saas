@@ -9,6 +9,7 @@ Things that are checked off are already in use.
 - [x] [Taskfile](https://taskfile.dev/) for task automation
 - [x] [Docker](https://www.docker.com/) for containerization
 - [x] [Flake](https://nixos.wiki/wiki/Flakes) for Nix package management
+- [x] [Mailslurper](https://mailslurper.com/) for email testing
 
 ## Backend
 
