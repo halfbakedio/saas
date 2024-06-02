@@ -8,7 +8,7 @@ import (
 var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Start SaaS",
-	Long:  `Start the SaaS server.`,
+	Long:  "Start the SaaS server.",
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Debug("Starting SaaS server...")
 	},

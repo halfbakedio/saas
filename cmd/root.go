@@ -10,7 +10,6 @@ import (
 
 var (
 	cfgFile string
-	// handler service.Handler
 	Verbose bool
 
 	rootCmd = &cobra.Command{
@@ -32,7 +31,6 @@ func init() {
 
 	addCommands()
 
-	// Setup command flags
 	rootCmd.PersistentFlags().StringVarP(
 		&cfgFile,
 		"config",
@@ -48,6 +46,7 @@ func init() {
 }
 
 func addCommands() {
+	rootCmd.AddCommand(seedCmd)
 	rootCmd.AddCommand(serveCmd)
 	rootCmd.AddCommand(versionCmd)
 }

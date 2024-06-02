@@ -9,6 +9,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/halfbakedio/saas/constants"
 	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -29,7 +30,7 @@ var (
 )
 
 var defaults = map[string]interface{}{
-	"env":           "development",
+	"env":           constants.Development.String(),
 	"db.host":       "127.0.0.1",
 	"db.port":       5432,
 	"db.name":       "saas",
@@ -37,7 +38,7 @@ var defaults = map[string]interface{}{
 	"db.password":   "postgres",
 	"db.sslmode":    "disable",
 	"log.formatter": "text",
-	"log.level":     "info",
+	"log.level":     "debug",
 	"service.bind":  "0.0.0.0",
 	"service.port":  9000,
 }

@@ -1,9 +1,13 @@
 package schema
 
 import (
+	"net/mail"
+
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 )
+
+// var emailRegex = regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`)
 
 // User holds the schema definition for the User entity.
 type User struct {
@@ -14,7 +18,13 @@ type User struct {
 func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("email").
-			Default("unknown"),
+			Unique().
+			Validate(func(s string) error {
+				_, err := mail.ParseAddress(s)
+				return err
+			}),
+		field.String("password").
+			Sensitive(),
 	}
 }
 

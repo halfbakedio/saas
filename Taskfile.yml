@@ -15,14 +15,16 @@ tasks:
     requires:
       vars: [MODEL]
 
+  # FIXME: `env` was removed from this last time it didn't work but it should
+  # probably work as-is by adding it back in and removing dir and to.
   gen-db-migration:
     cmds:
       - |
         atlas migrate diff \
           {{ .MIGRATION_NAME }} \
-          --env dev \
+          --dir "file://ent/migrate/migrations" \
           --to "ent://ent/schema" \
-          --dev-url "postgres://postgres:postgres@:5432/saas?search_path=public&sslmode=disable"
+          --dev-url "docker://postgres/16/dev?search_path=public"
     requires:
       vars: [MIGRATION_NAME]
 
@@ -64,4 +66,8 @@ tasks:
 
   dev-db-migrate:
     cmds:
-      - atlas migrate apply --env dev 
+      - atlas migrate apply --env local
+
+  dev-db-visualize:
+    cmds:
+      - atlas schema inspect --env local --visualize

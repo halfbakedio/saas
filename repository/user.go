@@ -33,6 +33,7 @@ func (repo *UserRepository) CreateUser(user *ent.User) (*ent.User, error) {
 	u, err := repo.conn.Client.User.
 		Create().
 		SetEmail(user.Email).
+		SetPassword(user.Password).
 		Save(repo.conn.Ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed creating user: %w", err)

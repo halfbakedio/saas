@@ -1,4 +1,9 @@
-env "dev" {
+variable "destructive" {
+  type    = bool
+  default = false
+}
+
+env "local" {
   src = "ent://ent/schema"
   url = "postgres://postgres:postgres@:5432/saas?search_path=public&sslmode=disable"
   dev = "docker://postgres/16/dev"
@@ -7,12 +12,12 @@ env "dev" {
     dir = "file://ent/migrate/migrations"
   }
 
-  # diff {
-  #   skip {
-  #     drop_table = true
-  #     drop_schema = true
-  #   }
-  # }
+  diff {
+    skip {
+      drop_schema = !var.destructive
+      drop_table  = !var.destructive
+    }
+  }
 
   format {
     migrate {

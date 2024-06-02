@@ -13,6 +13,8 @@ const (
 	FieldID = "id"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
+	// FieldPassword holds the string denoting the password field in the database.
+	FieldPassword = "password"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 )
@@ -21,6 +23,7 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldEmail,
+	FieldPassword,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -34,8 +37,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultEmail holds the default value on creation for the "email" field.
-	DefaultEmail string
+	// EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	EmailValidator func(string) error
 )
 
 // OrderOption defines the ordering options for the User queries.
@@ -49,4 +52,9 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 // ByEmail orders the results by the email field.
 func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEmail, opts...).ToFunc()
+}
+
+// ByPassword orders the results by the password field.
+func ByPassword(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPassword, opts...).ToFunc()
 }

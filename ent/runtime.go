@@ -15,6 +15,6 @@ func init() {
 	_ = userFields
 	// userDescEmail is the schema descriptor for email field.
 	userDescEmail := userFields[0].Descriptor()
-	// user.DefaultEmail holds the default value on creation for the email field.
-	user.DefaultEmail = userDescEmail.Default.(string)
+	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
 }
