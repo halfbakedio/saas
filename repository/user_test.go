@@ -12,9 +12,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-var (
-	dsn = "postgres://postgres:postgres@:5432/saas_test?search_path=public&sslmode=disable"
-)
+var dsn = "postgres://postgres:postgres@:5432/saas_test?search_path=public&sslmode=disable"
 
 type UserRepositoryTestSuite struct {
 	suite.Suite
@@ -50,7 +48,8 @@ func (s *UserRepositoryTestSuite) createTestUser(user *ent.User) (*ent.User, err
 
 func (s *UserRepositoryTestSuite) Test_CreateUser() {
 	user := &ent.User{
-		Email: "foo@example.com",
+		Email:    "foo@example.com",
+		Password: "test",
 	}
 
 	newUser, err := s.createTestUser(user)
@@ -58,6 +57,29 @@ func (s *UserRepositoryTestSuite) Test_CreateUser() {
 	s.NoError(err)
 	s.NotNil(newUser)
 	s.Equal(user.Email, newUser.Email)
+}
+
+func (s *UserRepositoryTestSuite) Test_CreateUser_Unique() {
+	users := []*ent.User{
+		{
+			Email:    "foo@example.com",
+			Password: "test",
+		},
+		{
+			Email:    "foo@example.com",
+			Password: "test",
+		},
+	}
+
+	repo := repository.NewUserRepository(s.conn)
+	user1, err := repo.CreateUser(users[0])
+	s.NoError(err)
+
+	_, err = repo.CreateUser(users[1])
+	s.Error(err)
+	s.Contains(err.Error(), "unique constraint")
+
+	_ = repo.DeleteUser(user1)
 }
 
 func (s *UserRepositoryTestSuite) Test_QueryUserByName() {
