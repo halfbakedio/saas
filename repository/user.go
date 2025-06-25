@@ -13,6 +13,7 @@ type IUserRepository interface {
 	CreateUser(user *ent.User) (*ent.User, error)
 	QueryUserByID(id int) (*ent.User, error)
 	QueryUserByEmail(email string) (*ent.User, error)
+	DeleteUser(user *ent.User) error
 }
 
 // UserRepository is a repository for users.

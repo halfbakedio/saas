@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/halfbakedio/saas/ent/organization"
 	"github.com/halfbakedio/saas/ent/user"
 )
 
@@ -29,6 +30,36 @@ func (uc *UserCreate) SetEmail(s string) *UserCreate {
 func (uc *UserCreate) SetPassword(s string) *UserCreate {
 	uc.mutation.SetPassword(s)
 	return uc
+}
+
+// AddTenantIDs adds the "tenant" edge to the Organization entity by IDs.
+func (uc *UserCreate) AddTenantIDs(ids ...int) *UserCreate {
+	uc.mutation.AddTenantIDs(ids...)
+	return uc
+}
+
+// AddTenant adds the "tenant" edges to the Organization entity.
+func (uc *UserCreate) AddTenant(o ...*Organization) *UserCreate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uc.AddTenantIDs(ids...)
+}
+
+// AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
+func (uc *UserCreate) AddOrganizationIDs(ids ...int) *UserCreate {
+	uc.mutation.AddOrganizationIDs(ids...)
+	return uc
+}
+
+// AddOrganizations adds the "organizations" edges to the Organization entity.
+func (uc *UserCreate) AddOrganizations(o ...*Organization) *UserCreate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uc.AddOrganizationIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -76,6 +107,9 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Password(); !ok {
 		return &ValidationError{Name: "password", err: errors.New(`ent: missing required field "User.password"`)}
 	}
+	if len(uc.mutation.TenantIDs()) == 0 {
+		return &ValidationError{Name: "tenant", err: errors.New(`ent: missing required edge "User.tenant"`)}
+	}
 	return nil
 }
 
@@ -109,6 +143,38 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 		_node.Password = value
+	}
+	if nodes := uc.mutation.TenantIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TenantTable,
+			Columns: []string{user.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.OrganizationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.OrganizationsTable,
+			Columns: user.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

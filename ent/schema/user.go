@@ -4,10 +4,9 @@ import (
 	"net/mail"
 
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
-
-// var emailRegex = regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`)
 
 // User holds the schema definition for the User entity.
 type User struct {
@@ -30,5 +29,10 @@ func (User) Fields() []ent.Field {
 
 // Edges of the User.
 func (User) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.To("tenant", Organization.Type).
+			Required(),
+		edge.From("organizations", Organization.Type).
+			Ref("users"),
+	}
 }

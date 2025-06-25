@@ -19,8 +19,40 @@ type User struct {
 	// Email holds the value of the "email" field.
 	Email string `json:"email,omitempty"`
 	// Password holds the value of the "password" field.
-	Password     string `json:"-"`
+	Password string `json:"-"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UserQuery when eager-loading is set.
+	Edges        UserEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// UserEdges holds the relations/edges for other nodes in the graph.
+type UserEdges struct {
+	// Tenant holds the value of the tenant edge.
+	Tenant []*Organization `json:"tenant,omitempty"`
+	// Organizations holds the value of the organizations edge.
+	Organizations []*Organization `json:"organizations,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [2]bool
+}
+
+// TenantOrErr returns the Tenant value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) TenantOrErr() ([]*Organization, error) {
+	if e.loadedTypes[0] {
+		return e.Tenant, nil
+	}
+	return nil, &NotLoadedError{edge: "tenant"}
+}
+
+// OrganizationsOrErr returns the Organizations value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) OrganizationsOrErr() ([]*Organization, error) {
+	if e.loadedTypes[1] {
+		return e.Organizations, nil
+	}
+	return nil, &NotLoadedError{edge: "organizations"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -76,6 +108,16 @@ func (u *User) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (u *User) Value(name string) (ent.Value, error) {
 	return u.selectValues.Get(name)
+}
+
+// QueryTenant queries the "tenant" edge of the User entity.
+func (u *User) QueryTenant() *OrganizationQuery {
+	return NewUserClient(u.config).QueryTenant(u)
+}
+
+// QueryOrganizations queries the "organizations" edge of the User entity.
+func (u *User) QueryOrganizations() *OrganizationQuery {
+	return NewUserClient(u.config).QueryOrganizations(u)
 }
 
 // Update returns a builder for updating this User.

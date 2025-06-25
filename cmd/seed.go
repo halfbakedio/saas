@@ -58,6 +58,7 @@ func seed(cmd *cobra.Command, args []string) {
 	userService = service.NewUserService(conn)
 
 	seedUsers()
+	seedOrganizations()
 }
 
 func seedUsers() {
@@ -83,4 +84,7 @@ func seedUsers() {
 			log.Fatal(err)
 		}
 	}
+}
+
+func seedOrganizations() {
 }

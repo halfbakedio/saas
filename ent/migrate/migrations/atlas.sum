@@ -1,3 +1,5 @@
-h1:aFj50Nm/itXdEjQyxvdHLSb+6ddsgKCooGgfAWxhWNc=
+h1:MzugaCFJKXWUnKVRG+5zwWA+kRg8x/0jTmpDHd+HPJw=
 20240529010213_add_users.sql h1:sHPYEq3dgDVPjNTUHnF1toChMxcMs8RYN4btjupDhnY=
 20240602154642_add_password_to_users.sql h1:Uw4l7dOYOTvLN14VcpwSktBLPJcb2CROGQ6NuYxq0KI=
+20240602204326_add_organizations.sql h1:/E7YmYCAM9544ORL8lFdmeB4gqgdM4nCVrsFh7HleBY=
+20240603151815_add_tenant_to_users.sql h1:YMbdbX2SoR7/PkuFcJvcRsMtcmiXOhalcPeECAJXzC0=

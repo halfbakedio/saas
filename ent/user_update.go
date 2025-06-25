@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/halfbakedio/saas/ent/organization"
 	"github.com/halfbakedio/saas/ent/predicate"
 	"github.com/halfbakedio/saas/ent/user"
 )
@@ -55,9 +56,81 @@ func (uu *UserUpdate) SetNillablePassword(s *string) *UserUpdate {
 	return uu
 }
 
+// AddTenantIDs adds the "tenant" edge to the Organization entity by IDs.
+func (uu *UserUpdate) AddTenantIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddTenantIDs(ids...)
+	return uu
+}
+
+// AddTenant adds the "tenant" edges to the Organization entity.
+func (uu *UserUpdate) AddTenant(o ...*Organization) *UserUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uu.AddTenantIDs(ids...)
+}
+
+// AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
+func (uu *UserUpdate) AddOrganizationIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddOrganizationIDs(ids...)
+	return uu
+}
+
+// AddOrganizations adds the "organizations" edges to the Organization entity.
+func (uu *UserUpdate) AddOrganizations(o ...*Organization) *UserUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uu.AddOrganizationIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
+}
+
+// ClearTenant clears all "tenant" edges to the Organization entity.
+func (uu *UserUpdate) ClearTenant() *UserUpdate {
+	uu.mutation.ClearTenant()
+	return uu
+}
+
+// RemoveTenantIDs removes the "tenant" edge to Organization entities by IDs.
+func (uu *UserUpdate) RemoveTenantIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveTenantIDs(ids...)
+	return uu
+}
+
+// RemoveTenant removes "tenant" edges to Organization entities.
+func (uu *UserUpdate) RemoveTenant(o ...*Organization) *UserUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uu.RemoveTenantIDs(ids...)
+}
+
+// ClearOrganizations clears all "organizations" edges to the Organization entity.
+func (uu *UserUpdate) ClearOrganizations() *UserUpdate {
+	uu.mutation.ClearOrganizations()
+	return uu
+}
+
+// RemoveOrganizationIDs removes the "organizations" edge to Organization entities by IDs.
+func (uu *UserUpdate) RemoveOrganizationIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveOrganizationIDs(ids...)
+	return uu
+}
+
+// RemoveOrganizations removes "organizations" edges to Organization entities.
+func (uu *UserUpdate) RemoveOrganizations(o ...*Organization) *UserUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uu.RemoveOrganizationIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -115,6 +188,96 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 	}
+	if uu.mutation.TenantCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TenantTable,
+			Columns: []string{user.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedTenantIDs(); len(nodes) > 0 && !uu.mutation.TenantCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TenantTable,
+			Columns: []string{user.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.TenantIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TenantTable,
+			Columns: []string{user.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.OrganizationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.OrganizationsTable,
+			Columns: user.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedOrganizationsIDs(); len(nodes) > 0 && !uu.mutation.OrganizationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.OrganizationsTable,
+			Columns: user.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.OrganizationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.OrganizationsTable,
+			Columns: user.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -163,9 +326,81 @@ func (uuo *UserUpdateOne) SetNillablePassword(s *string) *UserUpdateOne {
 	return uuo
 }
 
+// AddTenantIDs adds the "tenant" edge to the Organization entity by IDs.
+func (uuo *UserUpdateOne) AddTenantIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddTenantIDs(ids...)
+	return uuo
+}
+
+// AddTenant adds the "tenant" edges to the Organization entity.
+func (uuo *UserUpdateOne) AddTenant(o ...*Organization) *UserUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uuo.AddTenantIDs(ids...)
+}
+
+// AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
+func (uuo *UserUpdateOne) AddOrganizationIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddOrganizationIDs(ids...)
+	return uuo
+}
+
+// AddOrganizations adds the "organizations" edges to the Organization entity.
+func (uuo *UserUpdateOne) AddOrganizations(o ...*Organization) *UserUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uuo.AddOrganizationIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
+}
+
+// ClearTenant clears all "tenant" edges to the Organization entity.
+func (uuo *UserUpdateOne) ClearTenant() *UserUpdateOne {
+	uuo.mutation.ClearTenant()
+	return uuo
+}
+
+// RemoveTenantIDs removes the "tenant" edge to Organization entities by IDs.
+func (uuo *UserUpdateOne) RemoveTenantIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveTenantIDs(ids...)
+	return uuo
+}
+
+// RemoveTenant removes "tenant" edges to Organization entities.
+func (uuo *UserUpdateOne) RemoveTenant(o ...*Organization) *UserUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uuo.RemoveTenantIDs(ids...)
+}
+
+// ClearOrganizations clears all "organizations" edges to the Organization entity.
+func (uuo *UserUpdateOne) ClearOrganizations() *UserUpdateOne {
+	uuo.mutation.ClearOrganizations()
+	return uuo
+}
+
+// RemoveOrganizationIDs removes the "organizations" edge to Organization entities by IDs.
+func (uuo *UserUpdateOne) RemoveOrganizationIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveOrganizationIDs(ids...)
+	return uuo
+}
+
+// RemoveOrganizations removes "organizations" edges to Organization entities.
+func (uuo *UserUpdateOne) RemoveOrganizations(o ...*Organization) *UserUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uuo.RemoveOrganizationIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -252,6 +487,96 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
+	}
+	if uuo.mutation.TenantCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TenantTable,
+			Columns: []string{user.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedTenantIDs(); len(nodes) > 0 && !uuo.mutation.TenantCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TenantTable,
+			Columns: []string{user.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.TenantIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TenantTable,
+			Columns: []string{user.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.OrganizationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.OrganizationsTable,
+			Columns: user.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedOrganizationsIDs(); len(nodes) > 0 && !uuo.mutation.OrganizationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.OrganizationsTable,
+			Columns: user.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.OrganizationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.OrganizationsTable,
+			Columns: user.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues
